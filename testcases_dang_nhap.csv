@@ -1,0 +1,59 @@
+﻿TC ID,Module,Risk Level,Test Scenario,Pre-Condition,Test Steps,Test Data,Expected Result,Priority
+GOVN_LOGIN_TC_001,Đăng nhập thành công và Bảo mật,High Risk,Đăng nhập thành công với thông tin tài khoản hợp lệ,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập Tên đăng nhập hợp lệ.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""NV2"", Mật khẩu: ""12345678@Hn""","Đăng nhập thành công. Hệ thống chuyển hướng người dùng về Trang chủ tại địa chỉ https://gon-demo.pirago.work/. Tiêu đề trang đổi thành ""Trang chủ"". Sidebar bên trái hiển thị Logo GoVN, các liên kết ""Trang chủ"", ""Quản lý công việc"" và nút ""Đăng xuất"". Header phía trên hiển thị tên ""Nv2"", vai trò ""nvdaf"".",High
+GOVN_LOGIN_TC_002,Đăng nhập thành công và Bảo mật,High Risk,Đăng nhập không thành công do viết thường tất cả ký tự ở trường Tên đăng nhập,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập Tên đăng nhập viết thường.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""nv2"", Mật khẩu: ""12345678@Hn""","Đăng nhập thất bại. Không hiển thị lỗi riêng lẻ dưới từng trường. Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_003,Đăng nhập thành công và Bảo mật,High Risk,Đăng nhập không thành công do viết hoa tất cả ký tự ở trường Mật khẩu,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập Tên đăng nhập hợp lệ.
+2. Nhập Mật khẩu viết hoa sai định dạng.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""NV2"", Mật khẩu: ""12345678@HN""","Đăng nhập thất bại. Không hiển thị lỗi riêng lẻ dưới từng trường. Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_004,Đăng nhập thành công và Bảo mật,High Risk,Đăng nhập thất bại do Tên đăng nhập chứa khoảng trắng ở đầu và cuối,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập Tên đăng nhập có khoảng trắng ở đầu và cuối.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: "" NV2 "", Mật khẩu: ""12345678@Hn""","Đăng nhập thất bại (hệ thống không tự động cắt khoảng trắng). Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",Medium
+GOVN_LOGIN_TC_005,Đăng nhập thành công và Bảo mật,High Risk,Kiểm tra ngăn chặn SQL Injection trên trường Tên đăng nhập,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập câu lệnh SQL vào trường Tên đăng nhập.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""NV2 OR 1=1"", Mật khẩu: ""12345678@Hn""","Đăng nhập thất bại. Hệ thống không bị lỗi injection. Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_006,Đăng nhập thành công và Bảo mật,High Risk,Kiểm tra ngăn chặn XSS Injection trên trường Tên đăng nhập,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập thẻ Script vào trường Tên đăng nhập.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""<script>alert(1)</script>"", Mật khẩu: ""12345678@Hn""","Đăng nhập thất bại. Hệ thống xử lý chuỗi dưới dạng văn bản thường, không hiển thị hộp thoại popup JavaScript. Hiển thị thông báo lỗi chung: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_007,Đăng nhập thành công và Bảo mật,High Risk,Kích hoạt đăng nhập bằng phím Enter khi con trỏ đang ở trường Tên đăng nhập,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập Tên đăng nhập hợp lệ.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Enter khi đang focus ở trường Tên đăng nhập.","Tên đăng nhập: ""NV2"", Mật khẩu: ""12345678@Hn""",Hệ thống gửi yêu cầu và đăng nhập thành công. Chuyển hướng về Trang chủ.,Medium
+GOVN_LOGIN_TC_008,Đăng nhập thành công và Bảo mật,High Risk,Kích hoạt đăng nhập bằng phím Enter khi con trỏ đang ở trường Mật khẩu,Người dùng đang ở trang đăng nhập https://gon-demo.pirago.work/login,"1. Nhập Tên đăng nhập hợp lệ.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Enter khi đang focus ở trường Mật khẩu.","Tên đăng nhập: ""NV2"", Mật khẩu: ""12345678@Hn""",Hệ thống gửi yêu cầu và đăng nhập thành công. Chuyển hướng về Trang chủ.,Medium
+GOVN_LOGIN_TC_009,Đăng nhập thành công và Bảo mật,High Risk,Kiểm tra chặn truy cập trực tiếp vào Trang chủ khi chưa đăng nhập,Người dùng chưa đăng nhập vào hệ thống,1. Truy cập trực tiếp URL của Trang chủ: https://gon-demo.pirago.work/.,URL: https://gon-demo.pirago.work/,Hệ thống chặn truy cập và tự động chuyển hướng người dùng về trang Đăng nhập (https://gon-demo.pirago.work/login).,High
+GOVN_LOGIN_TC_010,Đăng nhập thành công và Bảo mật,High Risk,Kiểm tra tính năng Đăng xuất để xóa phiên làm việc,Người dùng đã đăng nhập thành công và đang ở Trang chủ,1. Click nút Đăng xuất ở menu sidebar bên trái.,Click chuột trái vào nút Đăng xuất.,Đăng xuất thành công. Hệ thống xóa session và chuyển hướng người dùng về trang Đăng nhập.,High
+GOVN_LOGIN_TC_011,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra validation khi để trống cả hai trường Tên đăng nhập và Mật khẩu,"Người dùng ở trang đăng nhập, các trường nhập để trống","1. Để trống cả 2 trường.
+2. Nhấn nút Đăng nhập.","Tên đăng nhập: """", Mật khẩu: """"","Hiển thị thông báo lỗi dưới trường Tên đăng nhập: ""Tên đăng nhập không được để trống."". Đồng thời hiển thị lỗi dưới trường Mật khẩu: ""Mật khẩu không được để trống.""",High
+GOVN_LOGIN_TC_012,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra validation khi nhập Tên đăng nhập nhưng để trống Mật khẩu,Người dùng ở trang đăng nhập,"1. Nhập Tên đăng nhập hợp lệ.
+2. Để trống trường Mật khẩu.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""NV2"", Mật khẩu: """"","Trường Tên đăng nhập không hiển thị lỗi. Dưới trường Mật khẩu hiển thị lỗi: ""Mật khẩu không được để trống.""",High
+GOVN_LOGIN_TC_013,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra validation khi để trống Tên đăng nhập nhưng nhập Mật khẩu,Người dùng ở trang đăng nhập,"1. Để trống trường Tên đăng nhập.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: """", Mật khẩu: ""12345678@Hn""","Dưới trường Tên đăng nhập hiển thị lỗi: ""Tên đăng nhập không được để trống."". Trường Mật khẩu không hiển thị lỗi.",High
+GOVN_LOGIN_TC_014,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra báo lỗi khi nhập sai Tên đăng nhập nhưng đúng Mật khẩu,Người dùng ở trang đăng nhập,"1. Nhập Tên đăng nhập không tồn tại.
+2. Nhập Mật khẩu đúng.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""SAI_USER_999"", Mật khẩu: ""12345678@Hn""","Không hiển thị lỗi dưới chân từng trường. Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_015,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra báo lỗi khi nhập đúng Tên đăng nhập nhưng sai Mật khẩu,Người dùng ở trang đăng nhập,"1. Nhập Tên đăng nhập đúng.
+2. Nhập Mật khẩu sai.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""NV2"", Mật khẩu: ""WrongPassword123""","Không hiển thị lỗi dưới chân từng trường. Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_016,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra báo lỗi khi nhập sai cả Tên đăng nhập và Mật khẩu,Người dùng ở trang đăng nhập,"1. Nhập Tên đăng nhập sai.
+2. Nhập Mật khẩu sai.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: ""SAI_USER_999"", Mật khẩu: ""WrongPassword123""","Không hiển thị lỗi dưới chân từng trường. Hiển thị thông báo lỗi chung phía trên form nhập: ""Tên đăng nhập hoặc mật khẩu không chính xác.""",High
+GOVN_LOGIN_TC_017,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra trường hợp độ dài tối đa của trường Tên đăng nhập,Người dùng ở trang đăng nhập,"1. Nhập chuỗi gồm 255 ký tự vào trường Tên đăng nhập.
+2. Nhập Mật khẩu hợp lệ.
+3. Nhấn nút Đăng nhập.","Tên đăng nhập: chuỗi 'A' lặp lại 255 lần, Mật khẩu: ""12345678@Hn""","Trường Tên đăng nhập cho phép nhập đủ 255 ký tự. Khi bấm Đăng nhập, hệ thống báo lỗi tài khoản không chính xác.",Medium
+GOVN_LOGIN_TC_018,Kiểm tra dữ liệu và Báo lỗi,Medium Risk,Kiểm tra trường hợp độ dài vượt quá giới hạn của trường Tên đăng nhập,Người dùng ở trang đăng nhập,"1. Nhập chuỗi gồm 256 ký tự vào trường Tên đăng nhập.
+2. Nhấn nút Đăng nhập.","Tên đăng nhập: chuỗi 'A' lặp lại 256 lần, Mật khẩu: ""12345678@Hn""",Trường Tên đăng nhập không cho phép nhập ký tự thứ 256 (giới hạn nhập liệu trên UI) hoặc hiển thị thông báo lỗi vượt quá độ dài hợp lệ.,Medium
+GOVN_LOGIN_TC_019,Tính năng Ẩn/Hiện mật khẩu,Low Risk,Kiểm tra trạng thái hiển thị mặc định của mật khẩu khi nhập liệu,Người dùng ở trang đăng nhập,"1. Nhập giá trị vào trường Mật khẩu.
+2. Quan sát dạng hiển thị của mật khẩu và biểu tượng con mắt.","Mật khẩu: ""MySecretPassword""","Mật khẩu hiển thị ở dạng ẩn (ký tự chấm tròn), thuộc tính type của input là password. Biểu tượng con mắt ở bên phải hiển thị ở dạng gạch chéo (visibility_off).",High
+GOVN_LOGIN_TC_020,Tính năng Ẩn/Hiện mật khẩu,Low Risk,Kiểm tra hiển thị mật khẩu dạng văn bản khi click icon con mắt,Người dùng ở trang đăng nhập và đã nhập mật khẩu,"1. Click vào biểu tượng con mắt visibility_off bên phải ô nhập mật khẩu.
+2. Quan sát dạng hiển thị và icon.","Mật khẩu: ""MySecretPassword"", click chuột trái vào icon.",Mật khẩu chuyển sang hiển thị chữ thường đọc được (type chuyển thành text). Biểu tượng con mắt chuyển sang dạng mở (visibility).,High
+GOVN_LOGIN_TC_021,Tính năng Ẩn/Hiện mật khẩu,Low Risk,Kiểm tra ẩn lại mật khẩu khi click biểu tượng con mắt lần thứ hai,"Người dùng ở trang đăng nhập, mật khẩu đang ở chế độ hiển thị (type=text)","1. Click lại vào biểu tượng con mắt visibility một lần nữa.
+2. Quan sát dạng hiển thị.",Click chuột trái vào icon.,Mật khẩu quay lại dạng ẩn (type chuyển về password). Biểu tượng con mắt quay về dạng closed (visibility_off).,High
+GOVN_LOGIN_TC_022,Điều hướng và Liên kết,Low Risk,Kiểm tra liên kết Quên mật khẩu,Người dùng đang ở trang đăng nhập,"1. Click vào liên kết ""Quên mật khẩu?"".","Click chuột trái vào text link ""Quên mật khẩu?""",Hệ thống chuyển hướng trình duyệt đến trang khôi phục mật khẩu có URL chứa /forget-password.,Medium
+GOVN_LOGIN_TC_023,Điều hướng và Liên kết,Low Risk,Kiểm tra an toàn phiên làm việc khi nhấn nút Back của trình duyệt sau khi đăng xuất,Người dùng vừa đăng xuất và đang ở màn hình đăng nhập,1. Bấm vào nút quay lại (Back arrow) trên trình duyệt.,Click nút Back của trình duyệt.,Trình duyệt không cho quay lại Trang chủ. Người dùng bị giữ lại ở trang login hoặc hệ thống tự động reload bắt đăng nhập lại.,High
+GOVN_LOGIN_TC_024,Điều hướng và Liên kết,Low Risk,Kiểm tra làm mới trang (F5) khi đang điền thông tin đăng nhập,"Người dùng ở trang đăng nhập, đang điền thông tin dở dang","1. Nhập Tên đăng nhập bất kỳ.
+2. Bấm F5 hoặc click Reload trên trình duyệt.","Tên đăng nhập: ""NV2_TEMP"", nhấn F5.","Trang web được nạp lại, form đăng nhập được đưa về trạng thái mặc định và các thông tin người dùng đã nhập bị xóa sạch.",Low
