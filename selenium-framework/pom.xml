@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =========================================================
+         Project Coordinates
+         ========================================================= -->
+    <groupId>com.govn</groupId>
+    <artifactId>selenium-framework</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>GoVN Selenium Automation Framework</name>
+    <description>
+        Web UI Automation Framework built with Java 11+, Selenium WebDriver 4,
+        TestNG, Page Object Model, ThreadLocal parallel execution support,
+        Data-Driven testing, and rich reporting via Allure + ExtentReports.
+    </description>
+
+    <!-- =========================================================
+         Global Properties
+         ========================================================= -->
+    <properties>
+        <!-- Java version -->
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions (pinned for reproducibility) -->
+        <selenium.version>4.20.0</selenium.version>
+        <webdrivermanager.version>5.8.0</webdrivermanager.version>
+        <testng.version>7.10.2</testng.version>
+        <log4j.version>2.23.1</log4j.version>
+        <extentreports.version>5.1.1</extentreports.version>
+        <allure.version>2.27.0</allure.version>
+        <jackson.version>2.17.1</jackson.version>
+        <apache.poi.version>5.2.5</apache.poi.version>
+        <lombok.version>1.18.32</lombok.version>
+
+        <!-- Plugin versions -->
+        <maven.surefire.version>3.3.0</maven.surefire.version>
+        <allure.maven.version>2.13.0</allure.maven.version>
+
+        <!-- Default TestNG suite (overridable via -Dsuite=smoke) -->
+        <suite>testng</suite>
+    </properties>
+
+    <!-- =========================================================
+         Dependencies
+         ========================================================= -->
+    <dependencies>
+
+        <!-- ─── Selenium WebDriver 4 ─── -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+
+        <!-- ─── WebDriverManager: Auto-downloads the correct browser driver binary ─── -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${webdrivermanager.version}</version>
+        </dependency>
+
+        <!-- ─── TestNG ─── -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+
+        <!-- ─── Log4j 2 (API + Core) ─── -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- ─── ExtentReports 5 (HTML test report) ─── -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${extentreports.version}</version>
+        </dependency>
+
+        <!-- ─── Allure TestNG integration ─── -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+
+        <!-- ─── Jackson Databind: JSON data-driven testing ─── -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- ─── Apache POI: Excel data-driven testing ─── -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+
+        <!-- ─── Lombok: Reduce boilerplate (Getters/Setters/Builders) ─── -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- =========================================================
+         Build Plugins
+         ========================================================= -->
+    <build>
+        <plugins>
+
+            <!-- Maven Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Surefire Plugin: runs TestNG, picks up testng.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.version}</version>
+                <configuration>
+                    <!-- Point to the TestNG suite file; override via -Dsuite=smoke -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng/${suite}.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <!-- Argline for Allure agent -->
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/1.9.22/aspectjweaver-1.9.22.jar"
+                    </argLine>
+                    <!-- Fail fast: stop entire build if there's a compilation error -->
+                    <failIfNoTests>false</failIfNoTests>
+                </configuration>
+                <dependencies>
+                    <!-- AspectJ weaver required by Allure -->
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>1.9.22</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Allure Maven Plugin: generate Allure report after test run -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure.maven.version}</version>
+                <configuration>
+                    <reportVersion>${allure.version}</reportVersion>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- =========================================================
+         Reporting (allure:report target)
+         ========================================================= -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure.maven.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>

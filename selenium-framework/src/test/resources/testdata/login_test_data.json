@@ -1,0 +1,61 @@
+[
+  {
+    "testCaseId": "TC_LOGIN_001",
+    "description": "Đăng nhập thành công với thông tin hợp lệ",
+    "username": "NV2",
+    "password": "12345678@Hn",
+    "expectedResult": "success",
+    "expectedUrl": "https://gon-demo.pirago.work/"
+  },
+  {
+    "testCaseId": "TC_LOGIN_002",
+    "description": "Đăng nhập thất bại: mật khẩu sai",
+    "username": "NV2",
+    "password": "wrongpassword",
+    "expectedResult": "invalid_credentials",
+    "expectedErrorMessage": "Tên đăng nhập hoặc mật khẩu không chính xác."
+  },
+  {
+    "testCaseId": "TC_LOGIN_003",
+    "description": "Đăng nhập thất bại: tên đăng nhập sai",
+    "username": "WRONG_USER",
+    "password": "12345678@Hn",
+    "expectedResult": "invalid_credentials",
+    "expectedErrorMessage": "Tên đăng nhập hoặc mật khẩu không chính xác."
+  },
+  {
+    "testCaseId": "TC_LOGIN_004",
+    "description": "Đăng nhập thất bại: cả hai trường đều sai",
+    "username": "WRONG_USER",
+    "password": "wrongpassword",
+    "expectedResult": "invalid_credentials",
+    "expectedErrorMessage": "Tên đăng nhập hoặc mật khẩu không chính xác."
+  },
+  {
+    "testCaseId": "TC_LOGIN_005",
+    "description": "Validation: Để trống cả hai trường",
+    "username": "",
+    "password": "",
+    "expectedResult": "validation_error",
+    "expectedUsernameError": "Tên đăng nhập không được để trống.",
+    "expectedPasswordError": "Mật khẩu không được để trống."
+  },
+  {
+    "testCaseId": "TC_LOGIN_006",
+    "description": "Validation: Có tên đăng nhập nhưng để trống mật khẩu",
+    "username": "NV2",
+    "password": "",
+    "expectedResult": "validation_error",
+    "expectedUsernameError": "",
+    "expectedPasswordError": "Mật khẩu không được để trống."
+  },
+  {
+    "testCaseId": "TC_LOGIN_007",
+    "description": "Validation: Để trống tên đăng nhập nhưng có mật khẩu",
+    "username": "",
+    "password": "12345678@Hn",
+    "expectedResult": "validation_error",
+    "expectedUsernameError": "Tên đăng nhập không được để trống.",
+    "expectedPasswordError": ""
+  }
+]

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║   GoVN Automation Suite – Full Regression                   ║
+    ║   Chạy song song ở cấp method, tối đa 3 luồng song song    ║
+    ║   Tương thích CI/CD (Jenkins, GitHub Actions, GitLab CI)    ║
+    ╚══════════════════════════════════════════════════════════════╝
+
+    Các tham số hỗ trợ override từ command line / CI:
+      -Dbrowser=chrome|firefox|edge
+      -Dheadless=true
+-->
+<suite name="GoVN-Full-Regression"
+       verbose="1"
+       parallel="methods"
+       thread-count="3"
+       data-provider-thread-count="3">
+
+    <!-- ─── Listener: ExtentReports + Allure ─── -->
+    <listeners>
+        <listener class-name="com.govn.framework.listeners.ExtentReportListener"/>
+    </listeners>
+
+    <!-- ─── Global Parameters (can be overridden per test) ─── -->
+    <parameter name="browser"  value="chrome"/>
+    <parameter name="headless" value="false"/>
+
+    <!-- ═══════════════════════════════════════════
+         Module: Authentication (Login)
+         ═══════════════════════════════════════════ -->
+    <test name="Login-Module" preserve-order="true">
+        <parameter name="browser"  value="chrome"/>
+        <parameter name="headless" value="false"/>
+        <classes>
+            <class name="com.govn.tests.login.LoginTest"/>
+        </classes>
+    </test>
+
+</suite>

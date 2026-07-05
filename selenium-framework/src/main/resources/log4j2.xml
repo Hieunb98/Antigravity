@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+=======================================================================
+  LOG4J2 CONFIGURATION - Selenium Automation Framework
+=======================================================================
+  File này cấu hình hệ thống ghi log (logging) cho toàn bộ framework
+  sử dụng thư viện Apache Log4j2.
+
+  CÁCH HOẠT ĐỘNG TỔNG QUAN:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Code Java gọi Logger  →  Log4j2 xử lý  →  Appender ghi log   │
+  │                                                                 │
+  │  logger.debug("...")   →  Kiểm tra level  →  Console (terminal)│
+  │  logger.info("...")    →  Kiểm tra filter →  File (automation  │
+  │  logger.error("...")   →  Áp dụng pattern →       .log)        │
+  └─────────────────────────────────────────────────────────────────┘
+
+  CÁC THÀNH PHẦN CHÍNH:
+    1. <Properties>  - Định nghĩa biến toàn cục (thư mục, pattern)
+    2. <Appenders>   - Nơi xuất log ra (Console / File)
+    3. <Loggers>     - Quy tắc ghi log theo package/class
+
+  CẤP ĐỘ LOG (từ thấp → cao):
+    TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+    → Chỉ những message có level >= level được cấu hình mới được ghi.
+
+  monitorInterval="30": Log4j2 tự động reload file cấu hình này
+    mỗi 30 giây nếu có thay đổi (không cần restart JVM).
+=======================================================================
+-->
+<Configuration status="WARN" monitorInterval="30">
+
+    <!--
+    =======================================================================
+      PROPERTIES - Biến toàn cục tái sử dụng trong toàn bộ file cấu hình
+    =======================================================================
+    -->
+    <Properties>
+
+        <!--
+          LOG_DIR: Thư mục lưu file log.
+          Đường dẫn tương đối so với thư mục gốc của project (Maven target/).
+          Khi chạy: target/logs/automation.log sẽ được tạo tự động.
+        -->
+        <Property name="LOG_DIR">target/logs</Property>
+
+        <!--
+          LOG_PATTERN: Định dạng (format) của mỗi dòng log khi xuất ra.
+          Giải thích từng thành phần:
+            %d{yyyy-MM-dd HH:mm:ss.SSS}  → Thời gian ghi log (vd: 2026-07-05 22:00:00.123)
+            [%t]                          → Tên thread đang chạy  (vd: [main], [TestNG-1])
+            %-5level                      → Cấp độ log, căn trái 5 ký tự (vd: DEBUG, INFO )
+            %logger{36}                   → Tên class ghi log, rút gọn tối đa 36 ký tự
+                                            (vd: com.govn.pages.LoginPage)
+            - %msg                        → Nội dung message thực tế
+            %n                            → Xuống dòng (newline)
+
+          Ví dụ dòng log thực tế:
+            2026-07-05 22:00:01.456 [main] DEBUG com.govn.pages.LoginPage - Clicking login button
+        -->
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+        </Property>
+
+    </Properties>
+
+    <!--
+    =======================================================================
+      APPENDERS - Định nghĩa nơi và cách xuất log ra ngoài
+      Mỗi Appender là một "đích đến" độc lập. Logger có thể gửi log
+      đến nhiều Appender cùng lúc.
+    =======================================================================
+    -->
+    <Appenders>
+
+        <!--
+          CONSOLE APPENDER
+          Xuất log ra terminal/console (stdout) khi chạy test.
+          Hữu ích để theo dõi tiến trình test theo thời gian thực.
+            name="ConsoleAppender"  → Tên định danh, dùng để tham chiếu trong <Loggers>
+            target="SYSTEM_OUT"     → Xuất ra standard output (thay vì SYSTEM_ERR)
+        -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!--
+          ROLLING FILE APPENDER
+          Xuất log ra file, tự động "xoay vòng" (rolling) khi đạt điều kiện.
+          Đảm bảo log không chiếm quá nhiều dung lượng ổ cứng.
+
+            fileName:    File log hiện tại đang được ghi (active log file)
+                         → target/logs/automation.log
+
+            filePattern: Tên file khi được archive/nén (sau khi rolling)
+                         → target/logs/automation-2026-07-05-1.log.gz
+                         Giải thích pattern:
+                           %d{yyyy-MM-dd} → Ngày tạo file archive
+                           %i             → Index tăng dần nếu có nhiều file cùng ngày (1, 2, 3...)
+                           .gz            → Tự động nén bằng Gzip để tiết kiệm dung lượng
+        -->
+        <RollingFile name="RollingFileAppender"
+                     fileName="${LOG_DIR}/automation.log"
+                     filePattern="${LOG_DIR}/automation-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+
+            <!--
+              POLICIES - Điều kiện để kích hoạt rolling (tạo file mới)
+              Chỉ cần MỘT trong các điều kiện sau thỏa mãn là rolling xảy ra:
+            -->
+            <Policies>
+                <!--
+                  TimeBasedTriggeringPolicy: Rolling theo thời gian.
+                  Mặc định: tạo file mới mỗi ngày (dựa theo %d{yyyy-MM-dd} trong filePattern).
+                  → Mỗi ngày có một file archive riêng.
+                -->
+                <TimeBasedTriggeringPolicy/>
+
+                <!--
+                  SizeBasedTriggeringPolicy: Rolling khi file vượt quá kích thước.
+                  size="10 MB": Nếu file automation.log > 10MB → tạo file mới.
+                  → Tránh một file log quá lớn, khó đọc và mở chậm.
+                -->
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+
+            <!--
+              DefaultRolloverStrategy: Chiến lược xử lý file cũ sau rolling.
+              max="30": Giữ tối đa 30 file archive (≈ 30 ngày lịch sử log).
+              → Khi vượt quá 30, file cũ nhất sẽ bị xóa tự động.
+            -->
+            <DefaultRolloverStrategy max="30"/>
+
+        </RollingFile>
+
+    </Appenders>
+
+    <!--
+    =======================================================================
+      LOGGERS - Quy tắc ghi log: class/package nào, level nào, ghi đâu
+      Logger được tra cứu theo tên (thường là tên class đầy đủ).
+      Log4j2 dùng cơ chế phân cấp: com.govn.pages kế thừa com.govn.
+    =======================================================================
+    -->
+    <Loggers>
+
+        <!--
+          FRAMEWORK LOGGER (com.govn)
+          Áp dụng cho TẤT CẢ các class trong package com.govn.* của framework.
+          → Bắt toàn bộ log từ: Pages, Steps, Utils, Tests, v.v.
+
+            name="com.govn"    → Khớp với package root của framework
+            level="DEBUG"      → Ghi tất cả log từ DEBUG trở lên
+                                 (DEBUG, INFO, WARN, ERROR, FATAL)
+                                 → Hữu ích khi debug: thấy được mọi bước thực thi
+            additivity="false" → KHÔNG chuyển tiếp log lên Root Logger
+                                 → Tránh ghi log trùng lặp 2 lần
+        -->
+        <Logger name="com.govn" level="DEBUG" additivity="false">
+            <!-- Gửi log đến cả Console và File cùng lúc -->
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Logger>
+
+        <!--
+          ROOT LOGGER (Fallback / Mặc định)
+          Xử lý log từ TẤT CẢ các class KHÔNG khớp với Logger nào ở trên.
+          → Áp dụng chủ yếu cho: Selenium, TestNG, Spring, thư viện bên thứ 3.
+
+            level="INFO"  → Chỉ ghi INFO trở lên (bỏ qua DEBUG của thư viện ngoài)
+                            → Giảm noise từ các dependency, chỉ giữ thông tin quan trọng
+        -->
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>

@@ -1,0 +1,29 @@
+# ============================================================
+# .gitignore cho GoVN Selenium Automation Framework
+# ============================================================
+
+# Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+.settings/
+
+# Test Reports (generated at runtime)
+target/extent-reports/
+target/allure-results/
+target/allure-report/
+target/screenshots/
+target/logs/
+target/surefire-reports/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Sensitive config (nếu có file override cho local)
+src/test/resources/config/local.properties
