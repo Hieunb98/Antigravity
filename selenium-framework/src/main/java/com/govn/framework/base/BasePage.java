@@ -2,12 +2,11 @@ package com.govn.framework.base;
 
 import com.govn.framework.driver.DriverFactory;
 import com.govn.framework.utils.WaitUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * BasePage – Lớp cha trừu tượng cho tất cả Page Object classes.
@@ -43,7 +42,6 @@ import org.openqa.selenium.support.PageFactory;
  */
 public abstract class BasePage {
 
-    private static final Logger log = LogManager.getLogger(BasePage.class);
     /**
      * WebDriver của thread hiện tại – thread-safe vì lấy từ
      * DriverFactory.getDriver()
@@ -61,7 +59,7 @@ public abstract class BasePage {
         // PageFactory.initElements sẽ tạo Proxy cho các @FindBy fields
         // → Element chỉ được tìm kiếm thực sự khi method được gọi (lazy evaluation)
         PageFactory.initElements(driver, this);
-        log.debug("✅ Khởi tạo Page Object: {}", this.getClass().getSimpleName());
+        LogUtils.debug("✅ Khởi tạo Page Object: {}", this.getClass().getSimpleName());
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -74,7 +72,7 @@ public abstract class BasePage {
      * @param url URL đích
      */
     protected void navigateTo(String url) {
-        log.info("🌐 Navigate đến: {}", url);
+        LogUtils.info("🌐 Navigate đến: {}", url);
         driver.get(url);
         WaitUtils.waitForPageReady(driver);
     }

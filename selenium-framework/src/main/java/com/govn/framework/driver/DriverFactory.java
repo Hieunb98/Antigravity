@@ -2,8 +2,6 @@ package com.govn.framework.driver;
 
 import com.govn.framework.config.ConfigReader;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -13,6 +11,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
 import java.time.Duration;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * DriverFactory – Factory class quản lý WebDriver bằng ThreadLocal.
@@ -30,8 +29,6 @@ import java.time.Duration;
  * </ul>
  */
 public final class DriverFactory {
-
-    private static final Logger log = LogManager.getLogger(DriverFactory.class);
 
     /**
      * ThreadLocal chứa WebDriver riêng cho từng thread.
@@ -57,19 +54,19 @@ public final class DriverFactory {
      */
     public static void initDriver(String browser, boolean headless) {
         if (driverThreadLocal.get() != null) {
-            log.warn("⚠️ Driver đã tồn tại trên thread {}. Bỏ qua việc khởi tạo lại.",
+            LogUtils.warn("⚠️ Driver đã tồn tại trên thread {}. Bỏ qua việc khởi tạo lại.",
                     Thread.currentThread().getName());
             return;
         }
 
-        log.info("🚀 Khởi tạo {} driver trên thread: {} (headless={})",
+        LogUtils.info("🚀 Khởi tạo {} driver trên thread: {} (headless={})",
                 browser, Thread.currentThread().getName(), headless);
 
         WebDriver driver = createDriver(browser, headless);
         configureDriver(driver);
         driverThreadLocal.set(driver);
 
-        log.info("✅ Driver khởi tạo thành công trên thread: {}", Thread.currentThread().getName());
+        LogUtils.info("✅ Driver khởi tạo thành công trên thread: {}", Thread.currentThread().getName());
     }
 
     /**
@@ -96,11 +93,11 @@ public final class DriverFactory {
     public static void quitDriver() {
         WebDriver driver = driverThreadLocal.get();
         if (driver != null) {
-            log.info("🔴 Đóng driver trên thread: {}", Thread.currentThread().getName());
+            LogUtils.info("🔴 Đóng driver trên thread: {}", Thread.currentThread().getName());
             try {
                 driver.quit();
             } catch (Exception e) {
-                log.warn("⚠️ Lỗi khi đóng driver: {}", e.getMessage());
+                LogUtils.warn("⚠️ Lỗi khi đóng driver: {}", e.getMessage());
             } finally {
                 // QUAN TRỌNG: Luôn xóa khỏi ThreadLocal dù quit() có lỗi hay không
                 driverThreadLocal.remove();

@@ -10,11 +10,10 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import io.qameta.allure.Story;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * LoginTest – Test class chứa tất cả test case cho chức năng Đăng nhập.
@@ -38,8 +37,6 @@ import org.testng.annotations.Test;
 @Feature("Login Module")
 public class LoginTest extends BaseTest {
 
-    private static final Logger log = LogManager.getLogger(LoginTest.class);
-
     /** Path đến file JSON test data trong classpath */
     private static final String LOGIN_DATA_JSON = "testdata/login_test_data.json";
 
@@ -57,7 +54,7 @@ public class LoginTest extends BaseTest {
      */
     @DataProvider(name = "loginData", parallel = true)
     public Object[][] provideLoginData() {
-        log.info("📦 Đang tải test data từ: {}", LOGIN_DATA_JSON);
+        LogUtils.info("📦 Đang tải test data từ: {}", LOGIN_DATA_JSON);
         return DataUtils.readJsonAsDataProvider(LOGIN_DATA_JSON, LoginTestData.class);
     }
 
@@ -79,7 +76,7 @@ public class LoginTest extends BaseTest {
     @Description("Xác minh người dùng có thể đăng nhập thành công với username='NV2' và password hợp lệ, " +
                  "sau đó được redirect về trang chủ.")
     public void testLoginSuccess() {
-        log.info("▶▶ [TC_LOGIN_001] Bắt đầu test đăng nhập thành công");
+        LogUtils.info("▶▶ [TC_LOGIN_001] Bắt đầu test đăng nhập thành công");
 
         // Given: Khởi tạo Page Object
         LoginPage loginPage = new LoginPage(getDriver());
@@ -93,7 +90,7 @@ public class LoginTest extends BaseTest {
                 "❌ Kỳ vọng redirect về trang chủ sau khi đăng nhập, nhưng vẫn ở: "
                 + loginPage.getCurrentUrl());
 
-        log.info("✅ [TC_LOGIN_001] PASSED – URL hiện tại: {}", loginPage.getCurrentUrl());
+        LogUtils.info("✅ [TC_LOGIN_001] PASSED – URL hiện tại: {}", loginPage.getCurrentUrl());
     }
 
     /**
@@ -109,7 +106,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
     @Description("Xác minh thông báo lỗi chính xác khi người dùng nhập sai mật khẩu.")
     public void testLoginWithWrongPassword() {
-        log.info("▶▶ [TC_LOGIN_002] Bắt đầu test đăng nhập với mật khẩu sai");
+        LogUtils.info("▶▶ [TC_LOGIN_002] Bắt đầu test đăng nhập với mật khẩu sai");
 
         // Arrange
         String expectedError = "Tên đăng nhập hoặc mật khẩu không chính xác.";
@@ -123,7 +120,7 @@ public class LoginTest extends BaseTest {
         Assert.assertEquals(actualError, expectedError,
                 "❌ Thông báo lỗi không đúng khi nhập sai mật khẩu:");
 
-        log.info("✅ [TC_LOGIN_002] PASSED – Error message: '{}'", actualError);
+        LogUtils.info("✅ [TC_LOGIN_002] PASSED – Error message: '{}'", actualError);
     }
 
     /**
@@ -141,12 +138,12 @@ public class LoginTest extends BaseTest {
     public void testLoginWithInvalidCredentials(LoginTestData testData) {
         // Chỉ chạy cho các test case liên quan đến invalid credentials
         if (!"invalid_credentials".equals(testData.getExpectedResult())) {
-            log.info("⏭️ Bỏ qua test case {} (expectedResult='{}')",
+            LogUtils.info("⏭️ Bỏ qua test case {} (expectedResult='{}')",
                     testData.getTestCaseId(), testData.getExpectedResult());
             return;
         }
 
-        log.info("▶▶ [{}] {}", testData.getTestCaseId(), testData.getDescription());
+        LogUtils.info("▶▶ [{}] {}", testData.getTestCaseId(), testData.getDescription());
 
         // Act
         LoginPage loginPage = new LoginPage(getDriver());
@@ -161,7 +158,7 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(loginPage.getCurrentUrl().contains("login"),
                 "❌ Kỳ vọng vẫn ở trang login sau khi đăng nhập sai.");
 
-        log.info("✅ [{}] PASSED", testData.getTestCaseId());
+        LogUtils.info("✅ [{}] PASSED", testData.getTestCaseId());
     }
 
     /**
@@ -177,7 +174,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Xác minh thông báo validation xuất hiện đúng khi cả hai trường bị để trống.")
     public void testLoginValidationBothFieldsEmpty() {
-        log.info("▶▶ [TC_LOGIN_005] Test validation: cả hai trường trống");
+        LogUtils.info("▶▶ [TC_LOGIN_005] Test validation: cả hai trường trống");
 
         // Act
         LoginPage loginPage = new LoginPage(getDriver());
@@ -193,7 +190,7 @@ public class LoginTest extends BaseTest {
         Assert.assertEquals(passwordError, "Mật khẩu không được để trống.",
                 "❌ Lỗi trường password không đúng:");
 
-        log.info("✅ [TC_LOGIN_005] PASSED – Cả hai lỗi validation đều hiển thị đúng");
+        LogUtils.info("✅ [TC_LOGIN_005] PASSED – Cả hai lỗi validation đều hiển thị đúng");
     }
 
     /**
@@ -205,7 +202,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Xác minh chỉ lỗi password xuất hiện khi username được nhập nhưng password bị để trống.")
     public void testLoginValidationPasswordEmpty() {
-        log.info("▶▶ [TC_LOGIN_006] Test validation: password trống");
+        LogUtils.info("▶▶ [TC_LOGIN_006] Test validation: password trống");
 
         // Act
         LoginPage loginPage = new LoginPage(getDriver());
@@ -221,7 +218,7 @@ public class LoginTest extends BaseTest {
         Assert.assertEquals(passwordError, "Mật khẩu không được để trống.",
                 "❌ Lỗi trường password không đúng:");
 
-        log.info("✅ [TC_LOGIN_006] PASSED");
+        LogUtils.info("✅ [TC_LOGIN_006] PASSED");
     }
 
     /**
@@ -233,7 +230,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.NORMAL)
     @Description("Xác minh chỉ lỗi username xuất hiện khi username bị để trống nhưng password được nhập.")
     public void testLoginValidationUsernameEmpty() {
-        log.info("▶▶ [TC_LOGIN_007] Test validation: username trống");
+        LogUtils.info("▶▶ [TC_LOGIN_007] Test validation: username trống");
 
         // Act
         LoginPage loginPage = new LoginPage(getDriver());
@@ -249,7 +246,7 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(passwordError.isEmpty(),
                 "❌ Không kỳ vọng lỗi password nhưng xuất hiện: '" + passwordError + "'");
 
-        log.info("✅ [TC_LOGIN_007] PASSED");
+        LogUtils.info("✅ [TC_LOGIN_007] PASSED");
     }
 
     /**
@@ -265,7 +262,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.MINOR)
     @Description("Xác minh chức năng toggle hiển thị mật khẩu: click icon mắt để đổi qua lại giữa kiểu password và text.")
     public void testPasswordVisibilityToggle() {
-        log.info("▶▶ [TC_LOGIN_UC03] Test toggle hiển thị mật khẩu");
+        LogUtils.info("▶▶ [TC_LOGIN_UC03] Test toggle hiển thị mật khẩu");
 
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.enterPassword("TestPassword123");
@@ -287,7 +284,7 @@ public class LoginTest extends BaseTest {
         Assert.assertEquals(afterSecondToggle, "password",
                 "❌ Sau lần click 2, type phải trở lại 'password':");
 
-        log.info("✅ [TC_LOGIN_UC03] PASSED – Toggle hoạt động đúng");
+        LogUtils.info("✅ [TC_LOGIN_UC03] PASSED – Toggle hoạt động đúng");
     }
 
     /**
@@ -303,7 +300,7 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.MINOR)
     @Description("Xác minh link 'Quên mật khẩu?' dẫn người dùng đến trang /forget-password.")
     public void testForgotPasswordNavigation() {
-        log.info("▶▶ [TC_LOGIN_UC04] Test navigation đến trang quên mật khẩu");
+        LogUtils.info("▶▶ [TC_LOGIN_UC04] Test navigation đến trang quên mật khẩu");
 
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.clickForgotPassword();
@@ -314,6 +311,6 @@ public class LoginTest extends BaseTest {
                 "❌ Kỳ vọng URL chứa '/forget-password' nhưng URL hiện tại là: "
                 + loginPage.getCurrentUrl());
 
-        log.info("✅ [TC_LOGIN_UC04] PASSED – URL: {}", loginPage.getCurrentUrl());
+        LogUtils.info("✅ [TC_LOGIN_UC04] PASSED – URL: {}", loginPage.getCurrentUrl());
     }
 }

@@ -1,7 +1,5 @@
 package com.govn.framework.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -31,8 +29,6 @@ import org.openqa.selenium.interactions.Actions;
  */
 public final class ActionUtils {
 
-    private static final Logger log = LogManager.getLogger(ActionUtils.class);
-
     // Utility class – không cho phép khởi tạo
     private ActionUtils() {}
 
@@ -48,7 +44,7 @@ public final class ActionUtils {
      * @param locator By locator của element cần click
      */
     public static void click(WebDriver driver, By locator) {
-        log.debug("🖱️ Click vào element: [{}]", locator);
+        LogUtils.debug("🖱️ Click vào element: [{}]", locator);
         WebElement element = WaitUtils.waitForClickable(driver, locator);
         element.click();
     }
@@ -61,7 +57,7 @@ public final class ActionUtils {
      * @param element  WebElement cần click
      */
     public static void click(WebDriver driver, WebElement element) {
-        log.debug("🖱️ Click vào element: [{}]", element);
+        LogUtils.debug("🖱️ Click vào element: [{}]", element);
         WaitUtils.waitForClickable(driver, element);
         element.click();
     }
@@ -74,7 +70,7 @@ public final class ActionUtils {
      * @param element  WebElement cần click
      */
     public static void jsClick(WebDriver driver, WebElement element) {
-        log.debug("🖱️ JS Click vào element: [{}]", element);
+        LogUtils.debug("🖱️ JS Click vào element: [{}]", element);
         WaitUtils.waitForVisible(driver, element);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
@@ -97,7 +93,7 @@ public final class ActionUtils {
      * @param element  WebElement cần double click
      */
     public static void doubleClick(WebDriver driver, WebElement element) {
-        log.debug("🖱️ Double Click vào element: [{}]", element);
+        LogUtils.debug("🖱️ Double Click vào element: [{}]", element);
         WaitUtils.waitForClickable(driver, element);
         new Actions(driver).doubleClick(element).perform();
     }
@@ -115,7 +111,7 @@ public final class ActionUtils {
      * @param text    text cần nhập (nếu rỗng, chỉ xóa nội dung)
      */
     public static void clearAndType(WebDriver driver, By locator, String text) {
-        log.debug("⌨️ ClearAndType vào [{}]: '{}'", locator,
+        LogUtils.debug("⌨️ ClearAndType vào [{}]: '{}'", locator,
                 text.isBlank() ? "(rỗng)" : text.replaceAll(".", "*")); // Mask password
         WebElement element = WaitUtils.waitForVisible(driver, locator);
         element.clear();
@@ -132,7 +128,7 @@ public final class ActionUtils {
      * @param text     text cần nhập
      */
     public static void clearAndType(WebDriver driver, WebElement element, String text) {
-        log.debug("⌨️ ClearAndType vào element: '{}'",
+        LogUtils.debug("⌨️ ClearAndType vào element: '{}'",
                 text.isBlank() ? "(rỗng)" : text.replaceAll(".", "*")); // Mask password
         WaitUtils.waitForVisible(driver, element);
         element.clear();
@@ -150,7 +146,7 @@ public final class ActionUtils {
      * @param text     text cần nhập thêm
      */
     public static void type(WebDriver driver, WebElement element, String text) {
-        log.debug("⌨️ Type vào element: '{}'", text);
+        LogUtils.debug("⌨️ Type vào element: '{}'", text);
         WaitUtils.waitForVisible(driver, element);
         element.sendKeys(text);
     }
@@ -163,7 +159,7 @@ public final class ActionUtils {
      * @param element  WebElement là input field
      */
     public static void clearByKeyboard(WebDriver driver, WebElement element) {
-        log.debug("⌨️ Clear input bằng Ctrl+A + Delete");
+        LogUtils.debug("⌨️ Clear input bằng Ctrl+A + Delete");
         WaitUtils.waitForVisible(driver, element);
         element.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
     }
@@ -176,7 +172,7 @@ public final class ActionUtils {
      * @param key      {@link Keys} cần nhấn
      */
     public static void pressKey(WebDriver driver, WebElement element, Keys key) {
-        log.debug("⌨️ Press key [{}] trên element [{}]", key.name(), element);
+        LogUtils.debug("⌨️ Press key [{}] trên element [{}]", key.name(), element);
         WaitUtils.waitForVisible(driver, element);
         element.sendKeys(key);
     }
@@ -195,7 +191,7 @@ public final class ActionUtils {
     public static String getText(WebDriver driver, WebElement element) {
         WaitUtils.waitForVisible(driver, element);
         String text = element.getText().trim();
-        log.debug("📖 getText: '{}'", text);
+        LogUtils.debug("📖 getText: '{}'", text);
         return text;
     }
 
@@ -236,7 +232,7 @@ public final class ActionUtils {
      * @param element  WebElement cần scroll đến
      */
     public static void scrollToElement(WebDriver driver, WebElement element) {
-        log.debug("📜 Scroll đến element: [{}]", element);
+        LogUtils.debug("📜 Scroll đến element: [{}]", element);
         ((JavascriptExecutor) driver)
                 .executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
     }
@@ -264,7 +260,7 @@ public final class ActionUtils {
      * @param element  WebElement cần hover
      */
     public static void hover(WebDriver driver, WebElement element) {
-        log.debug("🖱️ Hover vào element: [{}]", element);
+        LogUtils.debug("🖱️ Hover vào element: [{}]", element);
         WaitUtils.waitForVisible(driver, element);
         new Actions(driver).moveToElement(element).perform();
     }
@@ -284,7 +280,7 @@ public final class ActionUtils {
         try {
             return element.isDisplayed();
         } catch (Exception e) {
-            log.debug("Element không hiển thị hoặc không tồn tại: {}", e.getMessage());
+            LogUtils.debug("Element không hiển thị hoặc không tồn tại: {}", e.getMessage());
             return false;
         }
     }

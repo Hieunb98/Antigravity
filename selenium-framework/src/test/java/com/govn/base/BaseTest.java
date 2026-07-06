@@ -4,14 +4,13 @@ import com.govn.framework.config.ConfigReader;
 import com.govn.framework.driver.DriverFactory;
 import com.govn.framework.utils.ScreenshotUtils;
 import com.govn.framework.utils.WaitUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * BaseTest – Lớp cha trừu tượng cho tất cả Test class.
@@ -38,7 +37,6 @@ import org.testng.annotations.Parameters;
  */
 public abstract class BaseTest {
 
-    private static final Logger log = LogManager.getLogger(BaseTest.class);
     protected final ConfigReader config = ConfigReader.getInstance();
 
     // ═══════════════════════════════════════════════════════════════
@@ -66,11 +64,11 @@ public abstract class BaseTest {
         String resolvedBrowser  = System.getProperty("browser",  browser);
         String resolvedHeadless = System.getProperty("headless", headless);
 
-        log.info("═══════════════════════════════════════════════════");
-        log.info("▶ Setup test trên thread: {}", Thread.currentThread().getName());
-        log.info("   Browser  : {}", resolvedBrowser);
-        log.info("   Headless : {}", resolvedHeadless);
-        log.info("═══════════════════════════════════════════════════");
+        LogUtils.info("═══════════════════════════════════════════════════");
+        LogUtils.info("▶ Setup test trên thread: {}", Thread.currentThread().getName());
+        LogUtils.info("   Browser  : {}", resolvedBrowser);
+        LogUtils.info("   Headless : {}", resolvedHeadless);
+        LogUtils.info("═══════════════════════════════════════════════════");
 
         // Khởi tạo driver thông qua DriverFactory (ThreadLocal)
         DriverFactory.initDriver(resolvedBrowser, Boolean.parseBoolean(resolvedHeadless));
@@ -79,7 +77,7 @@ public abstract class BaseTest {
         getDriver().get(config.getLoginUrl());
         WaitUtils.waitForPageReady(getDriver());
 
-        log.info("✅ Setup hoàn tất. Đang ở URL: {}", getDriver().getCurrentUrl());
+        LogUtils.info("✅ Setup hoàn tất. Đang ở URL: {}", getDriver().getCurrentUrl());
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -102,25 +100,25 @@ public abstract class BaseTest {
     public void tearDown(ITestResult result) {
         String testName = result.getMethod().getMethodName();
 
-        log.info("◀ Teardown test: [{}] | Status: {}",
+        LogUtils.info("◀ Teardown test: [{}] | Status: {}",
                 testName, getStatusName(result.getStatus()));
 
         // Chụp screenshot tự động khi test FAIL
         if (result.getStatus() == ITestResult.FAILURE) {
-            log.warn("⚠️ Test FAILED – Chụp screenshot...");
+            LogUtils.warn("⚠️ Test FAILED – Chụp screenshot...");
             try {
                 String screenshotPath = ScreenshotUtils.captureAndSave(getDriver(), testName);
                 if (screenshotPath != null) {
-                    log.info("📸 Screenshot: {}", screenshotPath);
+                    LogUtils.info("📸 Screenshot: {}", screenshotPath);
                 }
             } catch (Exception e) {
-                log.error("Không thể chụp screenshot: {}", e.getMessage());
+                LogUtils.error("Không thể chụp screenshot: {}", e.getMessage());
             }
         }
 
         // Đóng driver và xóa khỏi ThreadLocal
         DriverFactory.quitDriver();
-        log.info("═══════════════════════════════════════════════════\n");
+        LogUtils.info("═══════════════════════════════════════════════════\n");
     }
 
     // ═══════════════════════════════════════════════════════════════

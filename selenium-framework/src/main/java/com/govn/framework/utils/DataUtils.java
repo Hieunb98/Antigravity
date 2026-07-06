@@ -2,8 +2,6 @@ package com.govn.framework.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -47,8 +45,6 @@ import java.util.Map;
  */
 public final class DataUtils {
 
-    private static final Logger log = LogManager.getLogger(DataUtils.class);
-
     // Jackson ObjectMapper là thread-safe khi đã cấu hình xong
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -76,17 +72,17 @@ public final class DataUtils {
      * @return              danh sách các object đã được parse
      */
     public static <T> List<T> readJsonList(String filePath, Class<T> targetClass) {
-        log.info("📂 Đọc JSON file: {}", filePath);
+        LogUtils.info("📂 Đọc JSON file: {}", filePath);
         try (InputStream inputStream = getResourceAsStream(filePath)) {
             List<T> dataList = OBJECT_MAPPER.readValue(
                     inputStream,
                     OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, targetClass)
             );
-            log.info("✅ Đọc thành công {} bản ghi từ JSON: {}", dataList.size(), filePath);
+            LogUtils.info("✅ Đọc thành công {} bản ghi từ JSON: {}", dataList.size(), filePath);
             return dataList;
 
         } catch (IOException e) {
-            log.error("❌ Lỗi khi đọc JSON file: {}", filePath, e);
+            LogUtils.error("❌ Lỗi khi đọc JSON file: {}", filePath, e);
             throw new RuntimeException("Không thể đọc JSON file: " + filePath, e);
         }
     }
@@ -99,16 +95,16 @@ public final class DataUtils {
      * @return danh sách Map key-value
      */
     public static List<Map<String, Object>> readJsonAsMapList(String filePath) {
-        log.info("📂 Đọc JSON file dạng Map: {}", filePath);
+        LogUtils.info("📂 Đọc JSON file dạng Map: {}", filePath);
         try (InputStream inputStream = getResourceAsStream(filePath)) {
             List<Map<String, Object>> dataList = OBJECT_MAPPER.readValue(
                     inputStream, new TypeReference<List<Map<String, Object>>>() {}
             );
-            log.info("✅ Đọc thành công {} bản ghi từ JSON: {}", dataList.size(), filePath);
+            LogUtils.info("✅ Đọc thành công {} bản ghi từ JSON: {}", dataList.size(), filePath);
             return dataList;
 
         } catch (IOException e) {
-            log.error("❌ Lỗi khi đọc JSON file dạng Map: {}", filePath, e);
+            LogUtils.error("❌ Lỗi khi đọc JSON file dạng Map: {}", filePath, e);
             throw new RuntimeException("Không thể đọc JSON Map file: " + filePath, e);
         }
     }
@@ -148,7 +144,7 @@ public final class DataUtils {
      * @return danh sách Map, mỗi Map là một dòng dữ liệu, key là tên cột
      */
     public static List<Map<String, String>> readExcel(String filePath, String sheetName) {
-        log.info("📊 Đọc Excel file: {} | Sheet: {}", filePath, sheetName);
+        LogUtils.info("📊 Đọc Excel file: {} | Sheet: {}", filePath, sheetName);
         List<Map<String, String>> dataList = new ArrayList<>();
 
         try (InputStream inputStream = getResourceAsStream(filePath);
@@ -163,7 +159,7 @@ public final class DataUtils {
 
             // Dòng đầu tiên là header
             if (!rowIterator.hasNext()) {
-                log.warn("⚠️ Sheet '{}' rỗng.", sheetName);
+                LogUtils.warn("⚠️ Sheet '{}' rỗng.", sheetName);
                 return dataList;
             }
 
@@ -186,11 +182,11 @@ public final class DataUtils {
                 dataList.add(rowMap);
             }
 
-            log.info("✅ Đọc thành công {} dòng dữ liệu từ Excel sheet '{}'", dataList.size(), sheetName);
+            LogUtils.info("✅ Đọc thành công {} dòng dữ liệu từ Excel sheet '{}'", dataList.size(), sheetName);
             return dataList;
 
         } catch (IOException e) {
-            log.error("❌ Lỗi khi đọc Excel file: {}", filePath, e);
+            LogUtils.error("❌ Lỗi khi đọc Excel file: {}", filePath, e);
             throw new RuntimeException("Không thể đọc Excel file: " + filePath, e);
         }
     }

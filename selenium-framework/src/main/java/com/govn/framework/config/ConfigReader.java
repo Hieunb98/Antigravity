@@ -1,11 +1,10 @@
 package com.govn.framework.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * ConfigReader – Singleton utility để đọc file config.properties.
@@ -21,7 +20,6 @@ import java.util.Properties;
  */
 public final class ConfigReader {
 
-    private static final Logger log = LogManager.getLogger(ConfigReader.class);
     private static final String CONFIG_FILE_PATH = "config/config.properties";
 
     private final Properties properties;
@@ -63,10 +61,10 @@ public final class ConfigReader {
             }
 
             properties.load(inputStream);
-            log.info("✅ Đã tải thành công config từ: {}", CONFIG_FILE_PATH);
+            LogUtils.info("✅ Đã tải thành công config từ: {}", CONFIG_FILE_PATH);
 
         } catch (IOException e) {
-            log.error("❌ Lỗi khi đọc file config: {}", CONFIG_FILE_PATH, e);
+            LogUtils.error("❌ Lỗi khi đọc file config: {}", CONFIG_FILE_PATH, e);
             throw new RuntimeException("Không thể đọc file cấu hình.", e);
         }
     }

@@ -8,14 +8,13 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import com.govn.framework.driver.DriverFactory;
 import com.govn.framework.utils.ScreenshotUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 import java.util.Base64;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * ExtentReportListener – TestNG Listener tự động tạo HTML report bằng
@@ -37,8 +36,6 @@ import java.util.Base64;
  */
 public class ExtentReportListener implements ITestListener {
 
-    private static final Logger log = LogManager.getLogger(ExtentReportListener.class);
-
     /** Singleton ExtentReports – thread-safe, dùng chung cho toàn bộ suite */
     private static ExtentReports extentReports;
 
@@ -53,7 +50,7 @@ public class ExtentReportListener implements ITestListener {
 
     @Override
     public synchronized void onStart(ITestContext context) {
-        log.info("🚀 Khởi tạo ExtentReports cho suite: {}", context.getSuite().getName());
+        LogUtils.info("🚀 Khởi tạo ExtentReports cho suite: {}", context.getSuite().getName());
         extentReports = initExtentReports(context.getSuite().getName());
     }
 
@@ -61,7 +58,7 @@ public class ExtentReportListener implements ITestListener {
     public synchronized void onFinish(ITestContext context) {
         if (extentReports != null) {
             extentReports.flush();
-            log.info("📊 ExtentReport đã flush. Xem báo cáo tại: {}", REPORT_PATH);
+            LogUtils.info("📊 ExtentReport đã flush. Xem báo cáo tại: {}", REPORT_PATH);
         }
     }
 
@@ -74,7 +71,7 @@ public class ExtentReportListener implements ITestListener {
         String testName = getTestName(result);
         String description = result.getMethod().getDescription();
 
-        log.info("▶ [Extent] Test bắt đầu: {}", testName);
+        LogUtils.info("▶ [Extent] Test bắt đầu: {}", testName);
 
         ExtentTest test = extentReports.createTest(testName, description);
         test.assignCategory(result.getMethod().getGroups());
@@ -83,7 +80,7 @@ public class ExtentReportListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        log.info("✅ [Extent] Test PASSED: {}", getTestName(result));
+        LogUtils.info("✅ [Extent] Test PASSED: {}", getTestName(result));
         if (getCurrentTest() != null) {
             getCurrentTest().log(Status.PASS, "✅ Test passed thành công.");
         }
@@ -92,7 +89,7 @@ public class ExtentReportListener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
-        log.error("❌ [Extent] Test FAILED: {}", getTestName(result));
+        LogUtils.error("❌ [Extent] Test FAILED: {}", getTestName(result));
 
         if (getCurrentTest() != null) {
             // Log exception
@@ -108,7 +105,7 @@ public class ExtentReportListener implements ITestListener {
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        log.warn("⏭️ [Extent] Test SKIPPED: {}", getTestName(result));
+        LogUtils.warn("⏭️ [Extent] Test SKIPPED: {}", getTestName(result));
         if (getCurrentTest() != null) {
             getCurrentTest().log(Status.SKIP,
                     "⏭️ Test bị bỏ qua: " + result.getThrowable().getMessage());
@@ -148,7 +145,7 @@ public class ExtentReportListener implements ITestListener {
                         MediaEntityBuilder.createScreenCaptureFromBase64String(base64Screenshot).build());
             }
         } catch (Exception e) {
-            log.warn("⚠️ Không thể đính kèm screenshot vào report: {}", e.getMessage());
+            LogUtils.warn("⚠️ Không thể đính kèm screenshot vào report: {}", e.getMessage());
         }
     }
 

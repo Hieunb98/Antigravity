@@ -3,12 +3,11 @@ package com.govn.pages.login;
 import com.govn.framework.base.BasePage;
 import com.govn.framework.utils.ActionUtils;
 import com.govn.framework.utils.WaitUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import com.govn.framework.utils.LogUtils;
 
 /**
  * LoginPage – Page Object đại diện cho trang đăng nhập GoVN.
@@ -29,8 +28,6 @@ import org.openqa.selenium.support.FindBy;
  * </ul>
  */
 public class LoginPage extends BasePage {
-
-    private static final Logger log = LogManager.getLogger(LoginPage.class);
 
     // ═══════════════════════════════════════════════════════════════
     //  Locators – Định nghĩa tập trung tất cả selector
@@ -99,7 +96,7 @@ public class LoginPage extends BasePage {
      */
     public LoginPage(WebDriver driver) {
         super(driver);
-        log.info("📄 Khởi tạo LoginPage tại URL: {}", driver.getCurrentUrl());
+        LogUtils.info("📄 Khởi tạo LoginPage tại URL: {}", driver.getCurrentUrl());
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -113,7 +110,7 @@ public class LoginPage extends BasePage {
      * @return LoginPage (fluent API để chain actions)
      */
     public LoginPage enterUsername(String username) {
-        log.info("⌨️ Nhập username: '{}'", username.isEmpty() ? "(rỗng)" : username);
+        LogUtils.info("⌨️ Nhập username: '{}'", username.isEmpty() ? "(rỗng)" : username);
         ActionUtils.clearAndType(driver, usernameInput, username);
         return this;
     }
@@ -126,7 +123,7 @@ public class LoginPage extends BasePage {
      */
     public LoginPage enterPassword(String password) {
         // Không log mật khẩu thực – chỉ log trạng thái rỗng hay không
-        log.info("⌨️ Nhập password: {}", password.isEmpty() ? "(rỗng)" : "***");
+        LogUtils.info("⌨️ Nhập password: {}", password.isEmpty() ? "(rỗng)" : "***");
         ActionUtils.clearAndType(driver, passwordInput, password);
         return this;
     }
@@ -137,7 +134,7 @@ public class LoginPage extends BasePage {
      * @return LoginPage (giữ nguyên context; test sẽ verify URL để xác định kết quả)
      */
     public LoginPage clickLoginButton() {
-        log.info("🖱️ Click nút Đăng nhập");
+        LogUtils.info("🖱️ Click nút Đăng nhập");
         ActionUtils.click(driver, loginButton);
         return this;
     }
@@ -162,7 +159,7 @@ public class LoginPage extends BasePage {
      * @return LoginPage (fluent API)
      */
     public LoginPage togglePasswordVisibility() {
-        log.info("🖱️ Click icon toggle hiển thị mật khẩu");
+        LogUtils.info("🖱️ Click icon toggle hiển thị mật khẩu");
         ActionUtils.click(driver, passwordToggleIcon);
         return this;
     }
@@ -171,7 +168,7 @@ public class LoginPage extends BasePage {
      * Click vào link "Quên mật khẩu?".
      */
     public void clickForgotPassword() {
-        log.info("🖱️ Click link 'Quên mật khẩu?'");
+        LogUtils.info("🖱️ Click link 'Quên mật khẩu?'");
         ActionUtils.click(driver, forgotPasswordLink);
     }
 
@@ -190,7 +187,7 @@ public class LoginPage extends BasePage {
             WebElement errorEl = WaitUtils.waitForVisible(driver, USERNAME_ERROR_MSG, 5);
             return errorEl.getText().trim();
         } catch (Exception e) {
-            log.debug("Không tìm thấy lỗi username validation.");
+            LogUtils.debug("Không tìm thấy lỗi username validation.");
             return "";
         }
     }
@@ -205,7 +202,7 @@ public class LoginPage extends BasePage {
             WebElement errorEl = WaitUtils.waitForVisible(driver, PASSWORD_ERROR_MSG, 5);
             return errorEl.getText().trim();
         } catch (Exception e) {
-            log.debug("Không tìm thấy lỗi password validation.");
+            LogUtils.debug("Không tìm thấy lỗi password validation.");
             return "";
         }
     }
@@ -220,7 +217,7 @@ public class LoginPage extends BasePage {
             WebElement errorEl = WaitUtils.waitForVisible(driver, GENERAL_ERROR_MSG, 10);
             return errorEl.getText().trim();
         } catch (Exception e) {
-            log.debug("Không tìm thấy general error message.");
+            LogUtils.debug("Không tìm thấy general error message.");
             return "";
         }
     }

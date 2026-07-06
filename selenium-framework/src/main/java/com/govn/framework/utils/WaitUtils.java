@@ -2,8 +2,6 @@ package com.govn.framework.utils;
 
 import com.govn.framework.config.ConfigReader;
 import com.govn.framework.driver.DriverFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -37,7 +35,6 @@ import java.util.List;
  */
 public final class WaitUtils {
 
-    private static final Logger log = LogManager.getLogger(WaitUtils.class);
     private static final int DEFAULT_TIMEOUT = ConfigReader.getInstance().getExplicitWaitTimeout();
 
     // Utility class – không cho phép khởi tạo
@@ -67,7 +64,7 @@ public final class WaitUtils {
      * @return WebElement đã hiển thị
      */
     public static WebElement waitForVisible(WebDriver driver, By locator, int timeoutSeconds) {
-        log.debug("⏳ Chờ element hiển thị [{}] (timeout: {}s)", locator, timeoutSeconds);
+        LogUtils.debug("⏳ Chờ element hiển thị [{}] (timeout: {}s)", locator, timeoutSeconds);
         return createWait(driver, timeoutSeconds)
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
@@ -81,7 +78,7 @@ public final class WaitUtils {
      * @return WebElement đã hiển thị
      */
     public static WebElement waitForVisible(WebDriver driver, WebElement element) {
-        log.debug("⏳ Chờ element [{}] hiển thị", element);
+        LogUtils.debug("⏳ Chờ element [{}] hiển thị", element);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.visibilityOf(element));
     }
@@ -94,7 +91,7 @@ public final class WaitUtils {
      * @return List WebElement đã hiển thị
      */
     public static List<WebElement> waitForAllVisible(WebDriver driver, By locator) {
-        log.debug("⏳ Chờ tất cả elements hiển thị [{}]", locator);
+        LogUtils.debug("⏳ Chờ tất cả elements hiển thị [{}]", locator);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
     }
@@ -119,7 +116,7 @@ public final class WaitUtils {
      * Chờ element có thể click được với timeout tùy chỉnh.
      */
     public static WebElement waitForClickable(WebDriver driver, By locator, int timeoutSeconds) {
-        log.debug("⏳ Chờ element clickable [{}] (timeout: {}s)", locator, timeoutSeconds);
+        LogUtils.debug("⏳ Chờ element clickable [{}] (timeout: {}s)", locator, timeoutSeconds);
         return createWait(driver, timeoutSeconds)
                 .until(ExpectedConditions.elementToBeClickable(locator));
     }
@@ -132,7 +129,7 @@ public final class WaitUtils {
      * @return WebElement đã sẵn sàng để click
      */
     public static WebElement waitForClickable(WebDriver driver, WebElement element) {
-        log.debug("⏳ Chờ element clickable [{}]", element);
+        LogUtils.debug("⏳ Chờ element clickable [{}]", element);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.elementToBeClickable(element));
     }
@@ -150,7 +147,7 @@ public final class WaitUtils {
      * @return WebElement đã có trong DOM
      */
     public static WebElement waitForPresence(WebDriver driver, By locator) {
-        log.debug("⏳ Chờ element có mặt trong DOM [{}]", locator);
+        LogUtils.debug("⏳ Chờ element có mặt trong DOM [{}]", locator);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.presenceOfElementLocated(locator));
     }
@@ -168,7 +165,7 @@ public final class WaitUtils {
      * @return true nếu element đã biến mất
      */
     public static boolean waitForInvisible(WebDriver driver, By locator) {
-        log.debug("⏳ Chờ element ẩn đi [{}]", locator);
+        LogUtils.debug("⏳ Chờ element ẩn đi [{}]", locator);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
@@ -186,7 +183,7 @@ public final class WaitUtils {
      * @return true nếu URL chứa chuỗi cần tìm
      */
     public static boolean waitForUrlContains(WebDriver driver, String urlFragment) {
-        log.debug("⏳ Chờ URL chứa: '{}'", urlFragment);
+        LogUtils.debug("⏳ Chờ URL chứa: '{}'", urlFragment);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.urlContains(urlFragment));
     }
@@ -199,7 +196,7 @@ public final class WaitUtils {
      * @return true nếu title chứa chuỗi cần tìm
      */
     public static boolean waitForTitleContains(WebDriver driver, String titleFragment) {
-        log.debug("⏳ Chờ title chứa: '{}'", titleFragment);
+        LogUtils.debug("⏳ Chờ title chứa: '{}'", titleFragment);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.titleContains(titleFragment));
     }
@@ -217,7 +214,7 @@ public final class WaitUtils {
      * @return true nếu text xuất hiện trong element
      */
     public static boolean waitForTextPresent(WebDriver driver, By locator, String text) {
-        log.debug("⏳ Chờ text '{}' xuất hiện trong element [{}]", text, locator);
+        LogUtils.debug("⏳ Chờ text '{}' xuất hiện trong element [{}]", text, locator);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.textToBePresentInElementLocated(locator, text));
     }
@@ -233,13 +230,13 @@ public final class WaitUtils {
      * @param driver WebDriver instance
      */
     public static void waitForPageReady(WebDriver driver) {
-        log.debug("⏳ Chờ trang tải xong (readyState = complete)...");
+        LogUtils.debug("⏳ Chờ trang tải xong (readyState = complete)...");
         createWait(driver, DEFAULT_TIMEOUT).until((ExpectedCondition<Boolean>) d -> {
             String readyState = (String) ((JavascriptExecutor) d)
                     .executeScript("return document.readyState");
             return "complete".equals(readyState);
         });
-        log.debug("✅ Trang đã tải xong.");
+        LogUtils.debug("✅ Trang đã tải xong.");
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -258,7 +255,7 @@ public final class WaitUtils {
      */
     public static boolean waitForAttributeContains(WebDriver driver, By locator,
                                                     String attributeName, String value) {
-        log.debug("⏳ Chờ attribute '{}' của [{}] chứa '{}'", attributeName, locator, value);
+        LogUtils.debug("⏳ Chờ attribute '{}' của [{}] chứa '{}'", attributeName, locator, value);
         return createWait(driver, DEFAULT_TIMEOUT)
                 .until(ExpectedConditions.attributeContains(locator, attributeName, value));
     }
@@ -271,7 +268,7 @@ public final class WaitUtils {
      * @param className   tên class cần kiểm tra
      */
     public static boolean waitForElementHasClass(WebDriver driver, WebElement element, String className) {
-        log.debug("⏳ Chờ element có class: '{}'", className);
+        LogUtils.debug("⏳ Chờ element có class: '{}'", className);
         return createWait(driver, DEFAULT_TIMEOUT).until(
                 d -> element.getAttribute("class") != null
                         && element.getAttribute("class").contains(className)

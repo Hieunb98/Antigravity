@@ -1,8 +1,6 @@
 package com.govn.framework.utils;
 
 import com.govn.framework.driver.DriverFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -23,7 +21,6 @@ import java.time.format.DateTimeFormatter;
  */
 public final class ScreenshotUtils {
 
-    private static final Logger log = LogManager.getLogger(ScreenshotUtils.class);
     private static final String SCREENSHOT_DIR = "target/screenshots/";
     private static final DateTimeFormatter TIMESTAMP_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
@@ -54,11 +51,11 @@ public final class ScreenshotUtils {
             Path destPath = dirPath.resolve(fileName);
             Files.copy(srcFile.toPath(), destPath);
 
-            log.info("📸 Screenshot đã lưu tại: {}", destPath.toAbsolutePath());
+            LogUtils.info("📸 Screenshot đã lưu tại: {}", destPath.toAbsolutePath());
             return destPath.toAbsolutePath().toString();
 
         } catch (IOException e) {
-            log.error("❌ Không thể lưu screenshot cho test: {}", testName, e);
+            LogUtils.error("❌ Không thể lưu screenshot cho test: {}", testName, e);
             return null;
         }
     }
@@ -73,7 +70,7 @@ public final class ScreenshotUtils {
         try {
             return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
         } catch (Exception e) {
-            log.error("❌ Không thể chụp screenshot dạng bytes: {}", e.getMessage());
+            LogUtils.error("❌ Không thể chụp screenshot dạng bytes: {}", e.getMessage());
             return null;
         }
     }
