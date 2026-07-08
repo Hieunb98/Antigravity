@@ -11,7 +11,6 @@ files_to_process = [
     "/Users/mymac/Desktop/Antigravity/selenium-framework/src/main/java/com/govn/framework/utils/DataUtils.java",
     "/Users/mymac/Desktop/Antigravity/selenium-framework/src/main/java/com/govn/framework/utils/ScreenshotUtils.java",
     "/Users/mymac/Desktop/Antigravity/selenium-framework/src/main/java/com/govn/framework/utils/ActionUtils.java",
-    "/Users/mymac/Desktop/Antigravity/selenium-framework/src/main/java/com/govn/framework/driver/DriverFactory.java",
     "/Users/mymac/Desktop/Antigravity/selenium-framework/src/main/java/com/govn/framework/config/ConfigReader.java"
 ]
 

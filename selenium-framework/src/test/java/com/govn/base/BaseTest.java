@@ -1,10 +1,17 @@
 package com.govn.base;
 
 import com.govn.framework.config.ConfigReader;
-import com.govn.framework.driver.DriverFactory;
 import com.govn.framework.utils.ScreenshotUtils;
 import com.govn.framework.utils.WaitUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.time.Duration;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -38,6 +45,7 @@ import com.govn.framework.utils.LogUtils;
 public abstract class BaseTest {
 
     protected final ConfigReader config = ConfigReader.getInstance();
+    private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
 
     // ═══════════════════════════════════════════════════════════════
     //  Setup: Trước mỗi test method
@@ -70,8 +78,18 @@ public abstract class BaseTest {
         LogUtils.info("   Headless : {}", resolvedHeadless);
         LogUtils.info("═══════════════════════════════════════════════════");
 
-        // Khởi tạo driver thông qua DriverFactory (ThreadLocal)
-        DriverFactory.initDriver(resolvedBrowser, Boolean.parseBoolean(resolvedHeadless));
+        // Khởi tạo driver trực tiếp
+        if (driverThreadLocal.get() != null) {
+            LogUtils.warn("⚠️ Driver đã tồn tại trên thread {}. Bỏ qua việc khởi tạo lại.",
+                    Thread.currentThread().getName());
+        } else {
+            LogUtils.info("🚀 Khởi tạo {} driver trên thread: {} (headless={})",
+                    resolvedBrowser, Thread.currentThread().getName(), resolvedHeadless);
+            WebDriver driver = createDriver(resolvedBrowser, Boolean.parseBoolean(resolvedHeadless));
+            configureDriver(driver);
+            driverThreadLocal.set(driver);
+            LogUtils.info("✅ Driver khởi tạo thành công trên thread: {}", Thread.currentThread().getName());
+        }
 
         // Navigate đến URL ban đầu và chờ trang tải xong
         getDriver().get(config.getLoginUrl());
@@ -116,8 +134,18 @@ public abstract class BaseTest {
             }
         }
 
-        // Đóng driver và xóa khỏi ThreadLocal
-        DriverFactory.quitDriver();
+        // Đóng driver trực tiếp và xóa khỏi ThreadLocal
+        WebDriver driver = driverThreadLocal.get();
+        if (driver != null) {
+            LogUtils.info("🔴 Đóng driver trên thread: {}", Thread.currentThread().getName());
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                LogUtils.warn("⚠️ Lỗi khi đóng driver: {}", e.getMessage());
+            } finally {
+                driverThreadLocal.remove();
+            }
+        }
         LogUtils.info("═══════════════════════════════════════════════════\n");
     }
 
@@ -127,12 +155,87 @@ public abstract class BaseTest {
 
     /**
      * Lấy WebDriver của thread hiện tại.
-     * Được sử dụng trong các subclass và Page Object.
+     * Được sử dụng trong các subclass, Page Object và Listeners.
      *
      * @return WebDriver instance của thread hiện tại
      */
-    protected WebDriver getDriver() {
-        return DriverFactory.getDriver();
+    public static WebDriver getDriver() {
+        WebDriver driver = driverThreadLocal.get();
+        if (driver == null) {
+            throw new IllegalStateException(
+                    "WebDriver chưa được khởi tạo trên thread: "
+                    + Thread.currentThread().getName()
+                    + ". Hãy gọi initDriver() trước.");
+        }
+        return driver;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  Driver Creation & Configuration Helpers
+    // ═══════════════════════════════════════════════════════════════
+
+    private WebDriver createDriver(String browser, boolean headless) {
+        return switch (browser.toLowerCase().trim()) {
+            case "chrome"  -> createChromeDriver(headless);
+            case "firefox" -> createFirefoxDriver(headless);
+            case "edge"    -> createEdgeDriver(headless);
+            default -> throw new IllegalArgumentException(
+                    "Browser không được hỗ trợ: '" + browser
+                    + "'. Chỉ chấp nhận: chrome, firefox, edge.");
+        };
+    }
+
+    private WebDriver createChromeDriver(boolean headless) {
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        applyCommonChromeOptions(options, headless);
+        return new ChromeDriver(options);
+    }
+
+    private WebDriver createFirefoxDriver(boolean headless) {
+        WebDriverManager.firefoxdriver().setup();
+        FirefoxOptions options = new FirefoxOptions();
+        if (headless) {
+            options.addArguments("--headless");
+        }
+        options.addArguments("--width=1920", "--height=1080");
+        return new FirefoxDriver(options);
+    }
+
+    private WebDriver createEdgeDriver(boolean headless) {
+        WebDriverManager.edgedriver().setup();
+        EdgeOptions options = new EdgeOptions();
+        if (headless) {
+            options.addArguments("--headless=new");
+        }
+        options.addArguments("--window-size=1920,1080", "--no-sandbox", "--disable-dev-shm-usage");
+        return new EdgeDriver(options);
+    }
+
+    private void applyCommonChromeOptions(ChromeOptions options, boolean headless) {
+        if (headless) {
+            options.addArguments("--headless=new");
+        }
+        options.addArguments(
+                "--window-size=1920,1080",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--disable-extensions",
+                "--disable-popup-blocking",
+                "--ignore-certificate-errors",
+                "--remote-allow-origins=*"
+        );
+        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        options.setExperimentalOption("useAutomationExtension", false);
+    }
+
+    private void configureDriver(WebDriver driver) {
+        driver.manage().timeouts().pageLoadTimeout(
+                Duration.ofSeconds(config.getPageLoadTimeout())
+        );
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
+        driver.manage().window().maximize();
     }
 
     // ═══════════════════════════════════════════════════════════════

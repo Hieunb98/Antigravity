@@ -1,7 +1,6 @@
 package com.govn.framework.utils;
 
 import com.govn.framework.config.ConfigReader;
-import com.govn.framework.driver.DriverFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;

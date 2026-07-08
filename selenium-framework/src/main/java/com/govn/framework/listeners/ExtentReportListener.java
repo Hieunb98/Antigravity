@@ -6,7 +6,7 @@ import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
-import com.govn.framework.driver.DriverFactory;
+import com.govn.base.BaseTest;
 import com.govn.framework.utils.ScreenshotUtils;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
@@ -137,7 +137,7 @@ public class ExtentReportListener implements ITestListener {
     /** Chụp screenshot và đính kèm vào ExtentTest dưới dạng Base64. */
     private void attachScreenshot(ITestResult result) {
         try {
-            WebDriver driver = DriverFactory.getDriver();
+            WebDriver driver = BaseTest.getDriver();
             byte[] screenshotBytes = ScreenshotUtils.captureAsBytes(driver);
             if (screenshotBytes != null && getCurrentTest() != null) {
                 String base64Screenshot = Base64.getEncoder().encodeToString(screenshotBytes);

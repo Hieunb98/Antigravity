@@ -1,6 +1,5 @@
 package com.govn.framework.base;
 
-import com.govn.framework.driver.DriverFactory;
 import com.govn.framework.utils.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -44,7 +43,7 @@ public abstract class BasePage {
 
     /**
      * WebDriver của thread hiện tại – thread-safe vì lấy từ
-     * DriverFactory.getDriver()
+     * BaseTest.getDriver()
      */
     protected final WebDriver driver;
 
